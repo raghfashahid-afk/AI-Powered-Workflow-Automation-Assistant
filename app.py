@@ -1,21 +1,19 @@
 from fastapi import FastAPI
 from database.db import engine, Base
-from routes import router
+
+import models
+import models.email_model
+
+from routes import router as auth_router
+from routes.gmail_routes import router as gmail_router
 
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="AI Workflow Assistant API",
     description="FYP Backend - University of Lahore",
-    version="0.2.0"
+    version="0.3.0"
 )
 
-app.include_router(router)
-
-@app.get("/")
-def root():
-    return {"message": "Workflow Assistant API is running"}
-
-@app.get("/health")
-def health_check():
-    return {"status": "ok", "database": "connected"}
+app.include_router(auth_router, prefix="/auth")
+app.include_router(gmail_router, prefix="/auth")
